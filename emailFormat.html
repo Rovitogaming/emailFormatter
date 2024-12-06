@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Email Formatter</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+
+<body>
+	<div class = "hero-unit" style = "padding:20px;">
+		<h1 id = "JavascriptError" style = "color: red;">JAVASCRIPT ERROR!</h1>
+		<h1 style = "color: lightblue;">Email Formatter:</h1>
+		<p style = "padding-top:20px;">Paste text containing emails:</p>
+		<input id = "textInput" onfocus="this.value=''">
+        <p id="status" style="color: green;"></p>
+        <input type="text" id="result" style="display: none;">
+	</div>
+
+	<script>
+		document.getElementById("JavascriptError").style.display = "none";
+
+        function validateEmail(email) {
+            const pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            return pattern.test(email);
+        }
+
+        function getEmailList(){
+            inputText = document.getElementById("textInput").value;
+            const spaceSeperated = inputText.split(" ");
+            console.log("Space Seperated:");
+            console.log(spaceSeperated);
+            var emails = [];
+            for(element of spaceSeperated){
+                if (validateEmail(element) == true){
+                    emails.push(element);
+                }
+            }
+            console.log("Emails:");
+            console.log(emails);
+            if (emails.length == 0){
+                document.getElementById("status").innerHTML = "Could not find any emails in your input text!";
+                document.getElementById("status").style.color = "red";
+                document.getElementById("textInput").value = "";
+                setTimeout(function(){
+                    document.getElementById("status").innerHTML = "";
+                }, 3000);
+                return;
+            }
+            commaSeperatedList = emails.toString();
+
+            document.getElementById("result").value = commaSeperatedList;
+            
+            //Copy to clipboard
+            var copyText = document.getElementById("result");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+            navigator.clipboard.writeText(copyText.value);
+
+            const resultMessage1 = "Successfully copied ";
+            const resultMessage2 = emails.length.toString();
+            const resultMessage3 = " emails to your clipboard!";
+
+            document.getElementById("status").innerHTML = resultMessage1.concat(resultMessage2, resultMessage3);
+            document.getElementById("status").style.color = "green";
+            document.getElementById("textInput").value = "";
+        }
+
+		document.getElementById("textInput").addEventListener("input", (event) => {
+			getEmailList();
+		})
+	</script>
+</body>
