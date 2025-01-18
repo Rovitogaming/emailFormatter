@@ -18,16 +18,19 @@
         <input type="text" id="result" style="display: none;">
 	</div>
 
-	<script>
-		document.getElementById("JavascriptError").style.display = "none";
 
+    
+	<script>
         function validateEmail(email) {
             const pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
             return pattern.test(email);
         }
 
-        function getEmailList(){
-            inputText = document.getElementById("textInput").value;
+        function getEmailList(inputText){
+            //inputText = document.getElementById("textInput").value;
+
+            console.log(inputText)
+
             const spaceSeperated = inputText.split(" ");
             console.log("Space Seperated:");
             console.log(spaceSeperated);
@@ -40,13 +43,39 @@
             console.log("Emails:");
             console.log(emails);
             if (emails.length == 0){
-                document.getElementById("status").innerHTML = "Could not find any emails in your input text!";
-                document.getElementById("status").style.color = "red";
-                document.getElementById("textInput").value = "";
-                setTimeout(function(){
-                    document.getElementById("status").innerHTML = "";
-                }, 3000);
-                return;
+                //Possibly table format
+
+                const emailsTableExtracted = inputText
+                .trim() // Remove leading/trailing whitespace
+                .split("\n") // Split by new lines
+                .map(line => line.split("\t")[1]) // Extract the email (second column)
+                .join(" "); // Join the emails with spaces
+
+                console.log("Table Extracted:");
+                console.log(emailsTableExtracted);
+
+                const spaceSeperated = emailsTableExtracted.split(" ");
+                console.log("Space Seperated:");
+                console.log(spaceSeperated);
+                var emails = [];
+                for(element of spaceSeperated){
+                    if (validateEmail(element) == true){
+                        emails.push(element);
+                    }
+                }
+                console.log("Emails:");
+                console.log(emails);
+
+                if (emails.length == 0){
+                    document.getElementById("status").innerHTML = "Could not find any emails in your input text!";
+                    document.getElementById("status").style.color = "red";
+                    document.getElementById("textInput").value = "";
+                    setTimeout(function(){
+                        document.getElementById("status").innerHTML = "";
+                    }, 3000);
+                    return;
+                }
+                
             }
             commaSeperatedList = emails.toString();
 
@@ -67,8 +96,19 @@
             document.getElementById("textInput").value = "";
         }
 
+        document.getElementById("JavascriptError").style.display = "none";
+            document.addEventListener("paste", function(e) {
+            // cancel paste
+            e.preventDefault();
+
+            // get text representation of clipboard
+            var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+            
+            getEmailList(text)
+        });
+
 		document.getElementById("textInput").addEventListener("input", (event) => {
-			getEmailList();
+			//getEmailList();
 		})
 	</script>
 </body>
